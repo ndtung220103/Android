@@ -17,34 +17,15 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 
 class ListFragment : Fragment() {
 
-    private  var students: MutableList<StudentModel> = mutableListOf(
-        StudentModel("Nguyễn Văn An", "SV001"),
-        StudentModel("Trần Thị Bảo", "SV002"),
-        StudentModel("Lê Hoàng Cường", "SV003"),
-        StudentModel("Phạm Thị Dung", "SV004"),
-        StudentModel("Đỗ Minh Đức", "SV005"),
-        StudentModel("Vũ Thị Hoa", "SV006"),
-        StudentModel("Hoàng Văn Hải", "SV007"),
-        StudentModel("Bùi Thị Hạnh", "SV008"),
-        StudentModel("Đinh Văn Hùng", "SV009"),
-        StudentModel("Nguyễn Thị Linh", "SV010"),
-        StudentModel("Phạm Văn Long", "SV011"),
-        StudentModel("Trần Thị Mai", "SV012"),
-        StudentModel("Lê Thị Ngọc", "SV013"),
-        StudentModel("Vũ Văn Nam", "SV014"),
-        StudentModel("Hoàng Thị Phương", "SV015"),
-        StudentModel("Đỗ Văn Quân", "SV016"),
-        StudentModel("Nguyễn Thị Thu", "SV017"),
-        StudentModel("Trần Văn Tài", "SV018"),
-        StudentModel("Phạm Thị Tuyết", "SV019"),
-        StudentModel("Lê Văn Vũ", "SV020")
-    )
+    private val sharedViewModel: MyViewModel by activityViewModels()
+    private lateinit var students: MutableList<StudentModel>
     private lateinit var studentAdapter : StudentAdapter
     var pos = -1
 
@@ -54,6 +35,7 @@ class ListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_list, container, false)
 
+        students = sharedViewModel.students
         studentAdapter = StudentAdapter(students)
 
         val listview = view.findViewById<ListView>(R.id.list_view_students)
@@ -67,7 +49,8 @@ class ListFragment : Fragment() {
             if (newName != null) {
                 if (newMssv != null) {
                     if (newName.isNotEmpty() && newMssv.isNotEmpty()) {
-                        students.add(StudentModel(newName, newMssv))
+//                        students.add(StudentModel(newName, newMssv))
+                        sharedViewModel.addStudent(StudentModel(newName, newMssv))
                         studentAdapter.notifyDataSetChanged()
                     }
                 }
@@ -76,7 +59,10 @@ class ListFragment : Fragment() {
             if (newName != null) {
                 if (newMssv != null) {
                     if (newName.isNotEmpty() && newMssv.isNotEmpty()) {
-                        students[pos!!] = StudentModel(newName,newMssv)
+//                        students[pos!!] = StudentModel(newName,newMssv)
+                        if (pos != null) {
+                            sharedViewModel.updateStudent(newMssv,newName,pos)
+                        }
                         this.pos = -1
                         studentAdapter.notifyDataSetChanged()
                     }
